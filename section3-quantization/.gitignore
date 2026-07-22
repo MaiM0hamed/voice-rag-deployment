@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+venv/
+.venv/
+# The benchmark artifacts below are required deliverables and ARE committed once
+# produced by a real run (`python results/generate_results.py` or the Colab
+# notebook). They are intentionally NOT ignored. Do not commit a run from
+# mismatched hardware; regenerate on the target machine instead.
+#   results/comparison_report.md
+#   results/raw_measurements.json

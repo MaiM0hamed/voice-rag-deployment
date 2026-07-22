@@ -1,0 +1,16 @@
+# Section 2 — LangChain RAG (all free / local; no paid APIs)
+langchain==1.3.14
+langchain-core==1.4.9
+langchain-classic==1.0.0          # EnsembleRetriever (moved here in LangChain 1.x)
+langchain-community==0.4.1        # BM25Retriever, PyPDFLoader
+langchain-chroma==1.1.0           # Chroma vector store integration
+langchain-text-splitters==1.0.0   # Markdown header + recursive splitters
+langchain-ollama==1.0.1           # ChatOllama generation + OllamaEmbeddings
+chromadb==1.4.0
+rank-bm25==0.2.2                  # keyword half of hybrid retrieval
+pypdf==6.1.3                      # optional: PDF corpus support
+
+# --- EMBEDDING_BACKEND=huggingface only (default) ---
+# Pulls in torch (~2 GB). Skip these if you use EMBEDDING_BACKEND=ollama.
+langchain-huggingface==1.0.1
+sentence-transformers==3.3.1

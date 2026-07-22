@@ -1,0 +1,2 @@
+LLM invoked tool: get_order_status(arguments={"order_id": "ORD-1001"})
+Tool returned: get_order_status -> Order ORD-1001 is shipped. Carrier: Aramex. ETA: 2026-07-19. (is_error=False)

@@ -1,0 +1,5 @@
+# Section 1 — LiveKit Agents (real SDK; free local providers)
+livekit-agents==1.6.6            # Agent, AgentSession, @function_tool
+livekit-plugins-openai==1.6.6    # openai.LLM.with_ollama() -> local Ollama
+livekit-plugins-silero==1.6.6    # free local VAD (barge-in / turn detection)
+python-dotenv==1.0.1

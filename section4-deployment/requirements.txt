@@ -1,0 +1,21 @@
+# Section 4 — FastAPI deployment
+#
+# NOTE: torch is installed separately in the Dockerfile so the CPU/GPU wheel
+# can be selected via build arg. For local (non-Docker) runs install it first:
+#   CPU: pip install torch --index-url https://download.pytorch.org/whl/cpu
+#   GPU: pip install torch --index-url https://download.pytorch.org/whl/cu121
+transformers>=4.44.0
+accelerate>=0.33.0
+
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.8.0
+pydantic-settings>=2.4.0
+
+# 4-bit serving (GPU only); harmless to install elsewhere.
+bitsandbytes>=0.43.0; platform_system == "Linux"
+
+# Load testing + tests
+httpx>=0.27.0
+locust>=2.31.0
+pytest>=8.0.0

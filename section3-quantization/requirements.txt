@@ -1,0 +1,18 @@
+# Section 3 — Quantization (all free / open-weight)
+#
+# torch: install the build matching your hardware FIRST.
+#   GPU (CUDA 12.1):  pip install torch --index-url https://download.pytorch.org/whl/cu121
+#   CPU only:         pip install torch --index-url https://download.pytorch.org/whl/cpu
+# The plain PyPI wheel below assumes CUDA; on a CPU-only box prefer the cpu index above.
+torch>=2.1.0
+transformers>=4.44.0
+accelerate>=0.33.0          # device_map="auto", low_cpu_mem_usage
+psutil>=5.9.0               # RSS measurement on CPU
+
+# 4-bit NF4 quantization. GPU-only: bitsandbytes kernels require CUDA.
+# On a CPU-only machine the 4-bit run is skipped automatically (see NOTES.md).
+bitsandbytes>=0.43.0; platform_system != "Darwin"
+
+# Test-only
+pytest>=8.0.0
+سس

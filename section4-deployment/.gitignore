@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+venv/
+.venv/
+# The two headline load-test artifacts below are required deliverables and ARE
+# committed once produced by a real run against a live service
+# (`python results/generate_results.py`). They are intentionally NOT ignored.
+#   results/load_test_report.md
+#   results/load_test_results.json
+# Optional / temporary outputs stay ignored:
+results/concurrency_sweep.*
+results/locust_report.html

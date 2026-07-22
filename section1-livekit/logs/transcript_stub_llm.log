@@ -1,0 +1,9 @@
+USER: Hi, are you a real person?
+AGENT: Hi! I'm an automated support assistant. How can I help?
+
+USER: What's the status of my order ORD-1001?
+AGENT: Here's what I found: Order ORD-1001 is shipped. Carrier: Aramex. ETA: 2026-07-19.
+
+USER: Thanks! Can you check ORD-9999 too?
+AGENT: Here's what I found: Order ORD-1001 is shipped. Carrier: Aramex. ETA: 2026-07-19.
+

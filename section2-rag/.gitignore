@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+venv/
+.venv/
+chroma_db/
+# outputs/example_runs.md is a required deliverable and is committed;
+# regenerate it with `python run_examples.py --rebuild`.

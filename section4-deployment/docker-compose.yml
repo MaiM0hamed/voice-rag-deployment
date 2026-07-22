@@ -1,0 +1,59 @@
+# Convenience wrapper around the Dockerfile.
+#
+#   docker compose up --build          # CPU
+#   docker compose --profile gpu up    # GPU (needs NVIDIA Container Toolkit)
+
+services:
+  inference-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: electropi-inference:latest
+    ports:
+      - "8000:8000"
+    environment:
+      MODEL_ID: ${MODEL_ID:-Qwen/Qwen2.5-1.5B-Instruct}
+      LOAD_IN_4BIT: ${LOAD_IN_4BIT:-false}
+      MAX_NEW_TOKENS: ${MAX_NEW_TOKENS:-256}
+      MAX_CONCURRENT_REQUESTS: ${MAX_CONCURRENT_REQUESTS:-4}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    volumes:
+      # Persist the HuggingFace cache so weights are downloaded once, not on
+      # every container rebuild.
+      - hf-cache:/home/appuser/.cache/huggingface
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 300s
+      retries: 3
+    restart: unless-stopped
+
+  # GPU variant. Enable with: docker compose --profile gpu up
+  inference-api-gpu:
+    profiles: ["gpu"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TORCH_INDEX: https://download.pytorch.org/whl/cu121
+    image: electropi-inference:gpu
+    ports:
+      - "8000:8000"
+    environment:
+      MODEL_ID: ${MODEL_ID:-Qwen/Qwen2.5-1.5B-Instruct}
+      LOAD_IN_4BIT: "true"
+      MAX_CONCURRENT_REQUESTS: ${MAX_CONCURRENT_REQUESTS:-8}
+    volumes:
+      - hf-cache:/home/appuser/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  hf-cache:
