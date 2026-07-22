@@ -1,4 +1,4 @@
-# Electro Pi — AI Engineer Technical Assessment
+# voice-rag
 
 Practical assessment covering LiveKit voice agents, LangChain RAG, model
 quantization, and containerised model deployment.
