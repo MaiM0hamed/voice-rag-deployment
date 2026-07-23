@@ -3,9 +3,11 @@
 Practical assessment covering LiveKit voice agents, LangChain RAG, model
 quantization, and containerised model deployment.
 
-**Everything runs on free / open-source tooling.** No paid API is used anywhere.
-Where the reference brief allowed a paid provider, a local open-source
-equivalent is used instead and the substitution is documented.
+**Everything runs on free / open-source tooling.** The LLM is local Ollama in every
+section; no paid tier is required anywhere. The one exception is Section 1's real voice
+path (`worker.py`), which uses **free-tier** Deepgram for STT + TTS — a real cloud
+speech provider, not a local model. That trade-off is called out explicitly in
+`section1-livekit/NOTES.md`, along with the fully-local swap seam.
 
 ---
 
@@ -98,6 +100,9 @@ electro-pi-ai-engineer-assessment/
   ollama serve
   ollama pull qwen2.5:1.5b
   ```
+- **A free-tier API key for section 1's real voice path** (`worker.py` only):
+  [Deepgram](https://console.deepgram.com) — one key covers both STT and TTS.
+  Not needed for the offline `run_session_demo.py`.
 - **Docker** for section 4's container
 - **A CUDA GPU** for section 3's 4-bit run (a free Colab T4 is enough).
   CPU-only machines still run the FP16 half; the 4-bit run is skipped with the
@@ -117,8 +122,12 @@ cd section1-livekit
 pip install -r requirements.txt
 cp .env.example .env
 
-python run_session_demo.py     # headless; writes logs/transcript.log
-# or, against a LiveKit server:
+# Offline, no keys/mic needed — writes logs/transcript.log:
+python run_session_demo.py
+
+# Real voice (mic -> Deepgram STT -> Ollama -> tool -> Deepgram TTS -> speaker).
+# Needs LIVEKIT_* and DEEPGRAM_API_KEY (free tier) in .env,
+# then join the room from the LiveKit Agents Playground and speak:
 python worker.py dev
 ```
 
@@ -228,9 +237,10 @@ Honesty about trade-offs is scored positively, so this is explicit.
 
 ## Known limitations
 
-- **Section 1:** STT/TTS are stubs (permitted by the brief). Barge-in is
-  configured in `worker.py` via Silero VAD but not demonstrated in the
-  text-driven transcript.
+- **Section 1:** `worker.py` runs real voice (Deepgram STT + TTS, free-tier cloud —
+  the one non-local dependency in the repo). Barge-in is enabled via Silero VAD +
+  `allow_interruptions=True`. `run_session_demo.py` stays offline and text-driven for
+  a keyless, mic-free grader path.
 - **Section 2:** the corpus is synthetic. No reranker is implemented — it is the
   first thing `NOTES.md` recommends adding. Refusal thresholds are reasoned
   defaults; run `calibrate_threshold.py` before trusting them.

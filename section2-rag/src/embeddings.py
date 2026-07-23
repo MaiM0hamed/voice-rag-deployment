@@ -52,7 +52,7 @@ def build_embeddings(cfg: Settings = settings) -> Embeddings:
     if backend == "huggingface":
         try:
             from langchain_huggingface import HuggingFaceEmbeddings
-        except ImportError as exc:  # pragma: no cover - env dependent
+        except ImportError as exc:  
             raise RuntimeError(
                 "EMBEDDING_BACKEND=huggingface requires `langchain-huggingface` "
                 "and `sentence-transformers` (which pulls in torch). Install them, "
