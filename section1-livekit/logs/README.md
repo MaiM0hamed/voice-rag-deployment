@@ -1,18 +1,22 @@
 # Logs — provenance
 
-`transcript_stub_llm.log` / `tool_invocation_stub_llm.log` were produced by a real
-run of `run_session_demo.py` (real `Agent`, real `AgentSession`, real
-`@function_tool` dispatch) against a **local OpenAI-compatible stub LLM**,
-because the machine used for development had no network access to pull the
-Ollama model.
+These files are produced by a **real** run of `run_session_demo.py`:
 
-The SDK path is therefore fully exercised and verified end to end: the log shows
-`FunctionCall` -> tool execution -> `FunctionCallOutput` -> assistant message.
-The one artifact of the stub is turn 3, where the stub's trivial routing repeats
-turn 2's order id; a real `qwen2.5:1.5b` issues `get_order_status("ORD-9999")`
-and the agent reports the not-found result (that tool branch is unit-verified).
+- `transcript.log` — the conversation (USER / AGENT turns).
+- `tool_invocation.log` — every `FunctionCall` the LLM emitted and its
+  `FunctionCallOutput`. Proof that the LLM actually invoked the tool.
+- `session.log` — the full run log (SDK + app).
 
-To regenerate with real Ollama:
+The pipeline is genuine end to end: real `Agent`, real `AgentSession`, real
+Ollama LLM (`qwen2.5:1.5b`), and real `@function_tool` dispatch by the SDK. Only
+STT/TTS are not exercised here, because the demo is text-driven (`AgentSession.run()`);
+the audio legs run in the live `worker.py` voice path.
 
-    ollama pull qwen2.5:1.5b && ollama serve
+The log shows the required chain — `FunctionCall → tool execution →
+FunctionCallOutput → assistant message` — including the `ORD-9999` not-found
+branch, which returns the tool's message (not a hallucination).
+
+To regenerate:
+
+    ollama serve            # with qwen2.5:1.5b pulled
     python run_session_demo.py

@@ -9,17 +9,31 @@ emits a tool call. Our code never decides to call the tool -- the LLM does.
 from __future__ import annotations
 
 import logging
+import re
 
 from livekit.agents import Agent, RunContext, function_tool
 
 logger = logging.getLogger(__name__)
 
+# Order ids look like "ORD-1001". Validating the shape lets us reject obvious
+# garbage before a backend round-trip and give the model a correctable message.
+_ORDER_ID_RE = re.compile(r"^ORD-\d{3,}$")
+
+# The tool wiring is correct on its own; what actually drives a small local model
+# to emit a real tool call (vs. answering from imagination) is an unambiguous,
+# mandatory instruction. This forceful wording was verified to make
+# qwen2.5:1.5b invoke get_order_status reliably across phrasings.
 SYSTEM_PROMPT = (
     "You are a friendly customer-support assistant for a food-delivery app. "
-    "Help users with their orders. When a user asks about an order's status and "
-    "provides an order id, call the get_order_status tool. Never invent order "
-    "details -- always rely on the tool's result. Keep replies short and "
-    "conversational, suitable for being spoken aloud."
+    "You have one tool: get_order_status.\n"
+    "RULES:\n"
+    "- For ANY question about an order's status, delivery, carrier, or ETA where "
+    "the user gives an order id, you MUST call get_order_status with that id.\n"
+    "- Do NOT ask the user to repeat an order id that is already in their message.\n"
+    "- NEVER answer an order question from your own knowledge or guess order "
+    "details -- always rely on the tool's returned result.\n"
+    "- If the user has not given an order id, ask for it in one short sentence.\n"
+    "Keep replies short and conversational, suitable for being spoken aloud."
 )
 
 # Mocked backend data (a DB or microservice in production).
@@ -45,6 +59,12 @@ class SupportAgent(Agent):
         """
         try:
             key = order_id.strip().upper()
+            if not _ORDER_ID_RE.match(key):
+                logger.warning("TOOL get_order_status: malformed order id: %r", order_id)
+                return (
+                    f"'{order_id}' is not a valid order number. "
+                    "Order numbers look like ORD-1001. Ask the user to repeat it."
+                )
             order = _MOCK_ORDERS.get(key)
             if order is None:
                 logger.warning("TOOL get_order_status: order not found: %s", key)

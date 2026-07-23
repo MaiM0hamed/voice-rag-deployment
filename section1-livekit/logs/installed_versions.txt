@@ -1,8 +1,0 @@
-livekit==1.1.13
-livekit-agents==1.6.6
-livekit-api==1.2.0
-livekit-blingfire==1.1.0
-livekit-local-inference==0.2.6
-livekit-plugins-openai==1.6.6
-livekit-plugins-silero==1.6.6
-livekit-protocol==1.1.19
